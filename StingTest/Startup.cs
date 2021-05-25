@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IO;
 using System.Text;
 using UserCase;
 
@@ -30,12 +31,24 @@ namespace StingTest
         {
             using (var db = new DataBase())
             {
-                var i = db.Database.EnsureCreated();
+                var wasCreate = db.Database.EnsureCreated();
             }
+
 
             services.AddEntityFrameworkSqlite();
 
             var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
+
+            if (jwtTokenConfig == null)
+            {
+                var path = Directory.GetCurrentDirectory() + "\\appsettings.json";
+                jwtTokenConfig = new ConfigurationBuilder()
+                    .AddJsonFile(path)
+                    .Build()
+                    .GetSection("jwtTokenConfig")
+                    .Get<JwtTokenConfig>();
+            }
+            
 
             var jwtAuthenticate = new JWTAuthenticate(jwtTokenConfig);
 
