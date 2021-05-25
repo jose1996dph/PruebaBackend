@@ -15,43 +15,41 @@ namespace TestStingTest
     [TestFixture]
     public class UserTest
     {
-        private readonly TestServer _server;
-        private readonly HttpClient _client;
-        public UserTest()
+        private TestServer _server;
+        private HttpClient _client;
+        [SetUp]
+        public void setup()
         {
             _server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             _client = _server.CreateClient();
         }
 
-        string token;
-        string userId;
-
         [Test]
-        public async void CreateUserTest()
+        public void CreateUserTest()
         {
             var userHelper = new UserHelper();
 
-            var user = await userHelper.CreateUser(_client);
+            var user = userHelper.CreateUser(_client).Result;
 
             Assert.True(user != null);
         }
 
         [Test]
-        public async void ShowUsersTest()
+        public void ShowUsersTest()
         {
             var userHelper = new UserHelper();
 
-            var user = await userHelper.CreateUser(_client);
+            var user = userHelper.CreateUser(_client).Result;
 
             var authHelper = new AuthHelper();
 
-            var token = await authHelper.Login(_client);
+            var token = authHelper.Login(_client).Result;
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
-            using var response = await _client.GetAsync("/api/users");
+            using var response = _client.GetAsync("/api/users").Result;
 
-            var result = await response.Content.ReadAsStringAsync();
+            var result = response.Content.ReadAsStringAsync().Result;
 
             var users = JsonConvert.DeserializeObject<List<UserResponse>>
             (
@@ -66,7 +64,7 @@ namespace TestStingTest
         }
 
         [Test]
-        public async void UpdateUSerTest()
+        public void UpdateUSerTest()
         {
             var userHelper = new UserHelper();
 
@@ -80,11 +78,11 @@ namespace TestStingTest
                 Photo_Name = "photo.png",
             };
 
-            var user = await userHelper.CreateUser(_client, userRequest);
+            var user = userHelper.CreateUser(_client, userRequest).Result;
 
             var authHelper = new AuthHelper();
 
-            var token = await authHelper.Login(_client, "Emailupdate@email.email", "Password");
+            var token = authHelper.Login(_client, "Emailupdate@email.email", "Password").Result;
 
             userRequest = new
             {
@@ -109,15 +107,15 @@ namespace TestStingTest
 
             using var param = new StringContent(content, Encoding.UTF8, "application/json");
 
-            using var response = await _client.PutAsync("/api/users/" + user.UserId, param);
+            using var response = _client.PutAsync("/api/users/" + user.UserId, param).Result;
 
-            var result = await response.Content.ReadAsStringAsync();
+            var result = response.Content.ReadAsStringAsync().Result;
 
             Assert.True(response.IsSuccessStatusCode);
         }
 
         [Test]
-        public async void ShowUserTest()
+        public void ShowUserTest()
         {
             var userHelper = new UserHelper();
 
@@ -131,17 +129,17 @@ namespace TestStingTest
                 Photo_Name = "photo.png",
             };
 
-            var user = await userHelper.CreateUser(_client, createUserRequest);
+            var user = userHelper.CreateUser(_client, createUserRequest).Result;
 
             var authHelper = new AuthHelper();
 
-            var token = await authHelper.Login(_client, "Emailshow@email.email", "Password");
+            var token = authHelper.Login(_client, "Emailshow@email.email", "Password").Result;
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
-            using var response = await _client.GetAsync("/api/users/" + user.UserId);
+            using var response = _client.GetAsync("/api/users/" + user.UserId).Result;
 
-            var result = await response.Content.ReadAsStringAsync();
+            var result = response.Content.ReadAsStringAsync().Result;
 
             var userResponse = JsonConvert.DeserializeObject<UserResponse>
             (
@@ -156,7 +154,7 @@ namespace TestStingTest
         }
 
         [Test]
-        public async void DeleteUserTest()
+        public void DeleteUserTest()
         {
             var userHelper = new UserHelper();
 
@@ -170,17 +168,17 @@ namespace TestStingTest
                 Photo_Name = "photo.png",
             };
 
-            var user = await userHelper.CreateUser(_client, createUserRequest);
+            var user = userHelper.CreateUser(_client, createUserRequest).Result;
 
             var authHelper = new AuthHelper();
 
-            var token = await authHelper.Login(_client, "Emaildelete@email.email", "Password");
+            var token = authHelper.Login(_client, "Emaildelete@email.email", "Password").Result;
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
-            using var response = await _client.DeleteAsync("/api/users/" + user.UserId);
+            using var response = _client.DeleteAsync("/api/users/" + user.UserId).Result;
 
-            var result = await response.Content.ReadAsStringAsync();
+            var result = response.Content.ReadAsStringAsync().Result;
 
             Assert.True(response.IsSuccessStatusCode);
         }
