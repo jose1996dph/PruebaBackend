@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Domain.Responses
 {
-    public class CreateUserResponse
+    public class UserResponse
     {
         [JsonPropertyName("user_id")]
         public int UserId { get; set; }

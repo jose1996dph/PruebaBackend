@@ -11,9 +11,9 @@ namespace Domain.Models
         public string Password { get; set; }
         public string FullName { get; set; }
         public string Photo { get; set; }
-        public CreateUserResponse ToCreateUserResponse()
+        public UserResponse ToCreateUserResponse()
         {
-            return new CreateUserResponse
+            return new UserResponse
             {
                 Email = Email,
                 Photo = Photo,

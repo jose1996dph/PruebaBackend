@@ -75,8 +75,6 @@ namespace Data
         {
             using var database = new DataBase();
 
-            var i = database.Users.ToList();
-
             return database.Users.SingleOrDefault(x => x.Email == username && x.Password == password);
         }
     }
