@@ -44,9 +44,9 @@ namespace UserCase
             userRepository.Update(userRequest.ToUser());
         }
 
-        public IEnumerable<CreateUserResponse> Get()
+        public IEnumerable<UserResponse> Get()
         {
-            var users = new List<CreateUserResponse>();
+            var users = new List<UserResponse>();
             foreach (var user in userRepository.Get())
             {
                 users.Add(user.ToCreateUserResponse());
