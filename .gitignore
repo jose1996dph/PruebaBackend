@@ -50,6 +50,7 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
+*.db3
 *.png
 *.jpg
 *.jpeg
